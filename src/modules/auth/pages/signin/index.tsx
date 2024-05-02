@@ -1,16 +1,20 @@
 import Input from "@/components/ui/Input";
 import AuthForm from "../../widgets/AuthForm";
+import Button from "@/components/ui/Button";
 import { useFormik } from "formik";
 import { AppContent } from "@/utils/content";
 import { object, string } from "yup";
-import Button from "@/components/ui/Button";
 import { Link } from "react-router-dom";
+import { login } from "../../store/auth";
+import { useAppDispatch } from "@/hook";
+
 const validation = object({
   email: string().email("Invalid email").required("Email is required!"),
   password: string().required("Password is required"),
 });
 
 export default function SigninPage() {
+  const dispatch = useAppDispatch();
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues: {
@@ -19,7 +23,7 @@ export default function SigninPage() {
       },
       validationSchema: validation,
       onSubmit(values, { resetForm }) {
-        console.log("values", values);
+        dispatch(login(values));
         resetForm();
       },
     });
