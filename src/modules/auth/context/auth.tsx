@@ -1,5 +1,5 @@
 import { IUser } from "@/types";
-import { ReactNode, Reducer, createContext, useReducer } from "react";
+import { ReactNode, createContext } from "react";
 
 interface AuthState {
   loading: boolean;
@@ -33,6 +33,6 @@ function authReducer(state: typeof initialState, action: ACTIONTYPE) {
 }
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(authReducer, initialState);
-  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
+  // const [state, dispatch] = useReducer(authReducer, initialState);
+  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 }
