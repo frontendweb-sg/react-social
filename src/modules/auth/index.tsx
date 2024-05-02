@@ -1,7 +1,9 @@
-export default function Admin() {
+import { Outlet } from "react-router-dom";
+
+export default function AuthPage() {
   return (
     <>
-      <h1>Auth page</h1>
+      <Outlet />
     </>
   );
 }
