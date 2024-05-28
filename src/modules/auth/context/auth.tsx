@@ -1,14 +1,9 @@
-import { IUser } from "@/types";
-import { ReactNode, createContext } from "react";
+import { Api } from "@/axios-instance";
+import type { IAuth, AuthResponse, UserSign, AuthState } from "../types";
+import { ReactNode, createContext, useState } from "react";
+import { toast } from "react-toastify";
 
-interface AuthState {
-  loading: boolean;
-  token: null | string;
-  user: null | IUser;
-  redirectUrl?: string;
-}
-
-export const AuthContext = createContext<AuthState | null>(null);
+export const AuthContext = createContext<IAuth | null>(null);
 
 const initialState = {
   loading: false,
@@ -17,22 +12,37 @@ const initialState = {
   redirectUrl: "/",
 };
 
-type ACTIONTYPE =
-  | { type: "increment"; payload: number }
-  | { type: "decrement"; payload: string };
-
-function authReducer(state: typeof initialState, action: ACTIONTYPE) {
-  switch (action.type) {
-    case "increment":
-      return {};
-    case "decrement":
-      return {};
-    default:
-      return state;
-  }
-}
-
 export default function AuthProvider({ children }: { children: ReactNode }) {
-  // const [state, dispatch] = useReducer(authReducer, initialState);
-  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
+  const [state, setState] = useState<AuthState>(initialState);
+
+  const login = async (request: UserSign) => {
+    try {
+      setState((prev) => ({ ...prev, loading: true }));
+      const response = await Api.post<AuthResponse>("/auth", request);
+      const {
+        data: { accessToken, user },
+      } = response;
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        user,
+        token: accessToken,
+      }));
+      return accessToken;
+    } catch (error) {
+      if (error instanceof Error) toast.error(error.message);
+    }
+  };
+
+  const register = async () => {};
+  const logout = () => {};
+  const checkUserIsLoggedin = () => {};
+
+  return (
+    <AuthContext.Provider
+      value={{ state, login, register, logout, checkUserIsLoggedin }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }

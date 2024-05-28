@@ -4,6 +4,8 @@ import { useFormik } from "formik";
 import { AppContent } from "@/utils/content";
 import { object, string } from "yup";
 import Button from "@/components/ui/Button";
+import useAuth from "../../hooks/useAuth";
+
 const validation = object({
   firstname: string().required("First name is required"),
   lastname: string().required("Last name is required"),
@@ -13,6 +15,7 @@ const validation = object({
 });
 
 export default function SignupPage() {
+  const { register } = useAuth();
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues: {
@@ -25,9 +28,11 @@ export default function SignupPage() {
       validationSchema: validation,
       onSubmit(values, { resetForm }) {
         console.log("values", values);
+        register();
         resetForm();
       },
     });
+  console.log("Signup page");
 
   return (
     <AuthForm

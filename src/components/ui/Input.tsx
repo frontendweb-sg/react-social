@@ -1,11 +1,15 @@
 import classNames from "classnames";
 import { FormikErrors, FormikTouched } from "formik";
 import { CircleX, CircleCheck } from "lucide-react";
+import FormGroup from "./FormGroup";
+import { useId } from "react";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
   errors?: FormikErrors<{ [key: string]: string }>;
   touched?: FormikTouched<{ [key: string]: string }>;
+  ariaLabeldBy?: string;
+  ariaLabel?: string;
 }
 export default function Input({
   name,
@@ -13,8 +17,11 @@ export default function Input({
   errors,
   touched,
   className,
+  ariaLabel = "",
+  ariaLabeldBy,
   ...rest
 }: InputProps) {
+  const inputId = useId();
   const error =
     errors?.[name as keyof typeof errors] &&
     touched?.[name as keyof typeof touched]
@@ -22,12 +29,7 @@ export default function Input({
       : null;
 
   return (
-    <div>
-      {label && (
-        <label className="block text-slate-600 text-sm font-medium mb-2">
-          {label}
-        </label>
-      )}
+    <FormGroup labelFor={inputId} label={label}>
       <div
         className={classNames(
           "ring-slate-800 hover:bg-gray-50 border border-gray-200 rounded-md relative",
@@ -39,12 +41,15 @@ export default function Input({
               touched?.[name as keyof typeof touched] &&
               errors?.[name as keyof typeof errors],
           },
-          className
+          className,
         )}
       >
         <input
-          className="text-sm font-semibold bg-transparent w-full p-3 outline-none"
           name={name}
+          className="text-sm font-semibold bg-transparent w-full p-3 outline-none"
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabeldBy}
+          id={inputId}
           {...rest}
         />
         {error && (
@@ -62,6 +67,6 @@ export default function Input({
           )}
       </div>
       {error && <div className="text-rose-600 text-xs mt-2">{error}</div>}
-    </div>
+    </FormGroup>
   );
 }

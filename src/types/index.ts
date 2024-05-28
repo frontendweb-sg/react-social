@@ -18,8 +18,3 @@ export type IUser = {
   provider?: string;
   provider_id?: string;
 };
-
-export type UserSign = {
-  email: string;
-  password: string;
-};

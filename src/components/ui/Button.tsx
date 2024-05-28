@@ -1,11 +1,15 @@
 import { Color, Size } from "@/types";
 import classNames from "classnames";
+import { LoaderIcon } from "lucide-react";
+import { memo } from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: Color;
   size?: Size;
+  loading?: boolean;
 }
-export default function Button({
+function Button({
+  loading,
   color = "primary",
   size = "full",
   children,
@@ -13,6 +17,7 @@ export default function Button({
   type = "button",
   ...rest
 }: ButtonProps) {
+  console.log("Button");
   return (
     <button
       className={classNames("btn", {
@@ -22,7 +27,9 @@ export default function Button({
       type={type}
       {...rest}
     >
-      {children}
+      {loading && <LoaderIcon className="spin" />} {children}
     </button>
   );
 }
+
+export default memo(Button);

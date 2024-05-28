@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import NotFound from "../pages/NotFound";
-
 /**
  * Global routes
  */
@@ -8,14 +7,18 @@ export const router = createBrowserRouter([
   {
     path: "/",
     async lazy() {
-      let component = await import("../modules/auth");
+      const component = await import("../modules/auth");
       return { Component: component.default };
     },
     children: [
       {
         index: true,
+        action: (args) => {
+          console.log(args);
+          return {};
+        },
         async lazy() {
-          let component = await import("../modules/auth/pages/signin");
+          const component = await import("../modules/auth/pages/signin");
           return { Component: component.default };
         },
       },

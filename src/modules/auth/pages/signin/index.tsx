@@ -4,9 +4,8 @@ import Button from "@/components/ui/Button";
 import { useFormik } from "formik";
 import { AppContent } from "@/utils/content";
 import { object, string } from "yup";
-import { Link } from "react-router-dom";
-import { login } from "../../store/auth";
-import { useAppDispatch } from "@/hook";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 const validation = object({
   email: string().email("Invalid email").required("Email is required!"),
@@ -14,19 +13,31 @@ const validation = object({
 });
 
 export default function SigninPage() {
-  const dispatch = useAppDispatch();
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      initialValues: {
-        email: "",
-        password: "",
-      },
-      validationSchema: validation,
-      onSubmit(values, { resetForm }) {
-        dispatch(login(values));
-        resetForm();
-      },
-    });
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const {
+    isSubmitting,
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: validation,
+    onSubmit(values, { resetForm, setSubmitting }) {
+      const token = login(values);
+      if (token !== undefined) {
+        navigate("/admin");
+      }
+      setSubmitting(false);
+      resetForm();
+    },
+  });
 
   return (
     <AuthForm onSubmit={handleSubmit}>
@@ -60,7 +71,9 @@ export default function SigninPage() {
           {AppContent.forgotPassword}
         </Link>
       </div>
-      <Button type="submit">{AppContent.signin}</Button>
+      <Button loading={isSubmitting} disabled={isSubmitting} type="submit">
+        {AppContent.signin}
+      </Button>
     </AuthForm>
   );
 }
